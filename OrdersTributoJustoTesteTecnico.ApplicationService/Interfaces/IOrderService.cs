@@ -12,6 +12,6 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Interfaces
         Task<bool> RemoveProductAsync(OrderUpdateRequest orderUpdateRequest);
         Task<OrderResponse> GetByIdAsync(int id);
         Task<List<OrderResponse>> GetAllAsync();
-        Task<PageList<OrderResponse>> FindAllWithPaginationAsync(PageParams pageParams);
+        Task<PageList<OrderResponse>> GetAllWithPaginationAsync(PageParams pageParams);
     }
 }

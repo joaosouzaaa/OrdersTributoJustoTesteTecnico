@@ -18,9 +18,12 @@ namespace OrdersTributoJustoTesteTecnico.Infra.Repositories.BaseRepositories
             _paginationService = paginationService;
         }
 
-        public virtual async Task<TEntity> GetByIdAsync(int id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include)
+        public virtual async Task<TEntity> GetByIdAsync(int id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include, bool asNoTracking)
         {
-            var query = _dbContextSet.AsNoTracking();
+            var query = (IQueryable<TEntity>)_dbContext.Set<TEntity>();
+
+            if (asNoTracking)
+                query = _dbContextSet.AsNoTracking();
 
             if (include != null)
                 query = include(query);
@@ -38,7 +41,7 @@ namespace OrdersTributoJustoTesteTecnico.Infra.Repositories.BaseRepositories
             return await query.ToListAsync();
         }
 
-        public virtual async Task<PageList<TEntity>> FindAllWithPaginationAsync(PageParams pageParams, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include)
+        public virtual async Task<PageList<TEntity>> GetAllWithPaginationAsync(PageParams pageParams, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include)
         {
             var query = _dbContextSet.AsNoTracking();
 

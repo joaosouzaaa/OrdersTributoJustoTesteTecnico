@@ -27,8 +27,8 @@ namespace OrdersTributoJustoTesteTecnico.Api.Controllers
             await _productService.GetAllAsync();
 
         [HttpGet("get_all_paginated")]
-        public async Task<PageList<ProductResponse>> FindAllWithPaginationAsync([FromQuery] PageParams pageParams) =>
-            await _productService.FindAllWithPaginationAsync(pageParams);
+        public async Task<PageList<ProductResponse>> GetAllWithPaginationAsync([FromQuery] PageParams pageParams) =>
+            await _productService.GetAllWithPaginationAsync(pageParams);
 
         [HttpPost("create")]
         public async Task<bool> AddAsync([FromForm] ProductSaveRequest productSaveRequest) =>

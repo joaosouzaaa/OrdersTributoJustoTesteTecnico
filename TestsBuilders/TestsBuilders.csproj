@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="34.0.2" />
+	<FrameworkReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OrdersTributoJustoTesteTecnico.ApplicationService\OrdersTributoJustoTesteTecnico.ApplicationService.csproj" />
+    <ProjectReference Include="..\OrdersTributoJustoTesteTecnico.Domain\OrdersTributoJustoTesteTecnico.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

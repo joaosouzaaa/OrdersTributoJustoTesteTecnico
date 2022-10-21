@@ -20,9 +20,7 @@ namespace OrdersTributoJustoTesteTecnico.Business.Settings.ValidationSettings.En
               : EMessage.MoreExpected.Description().FormatTo("Last Name", "3 to 50"));
 
             RuleFor(c => c.Cpf.CleanCaracters()).Length(11)
-               .WithMessage(c => string.IsNullOrWhiteSpace(c.Cpf)
-              ? EMessage.Required.Description().FormatTo("Cpf")
-              : EMessage.MoreExpected.Description().FormatTo("Cpf", "11"));
+               .WithMessage(EMessage.MoreExpected.Description().FormatTo("Cpf", "11"));
 
             RuleFor(c => c.Age).GreaterThan(0)
                 .WithMessage(EMessage.GreaterThan0.Description().FormatTo("Age"));

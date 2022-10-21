@@ -27,7 +27,12 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
             var product = productSaveRequest.MapTo<ProductSaveRequest, Product>();
 
             if (productSaveRequest.ImageToSave != null)
+            {
                 product.Image = productSaveRequest.ImageToSave.ImageToBytes();
+
+                if (product.Image == null)
+                    return _notification.AddDomainNotification("File format", "Imagem no formato inválido");
+            }
 
             if (!await ValidateAsync(product))
                 return false;
@@ -58,14 +63,14 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
 
         public async Task<ProductImageResponse> GetByIdAsync(int id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var product = await _productRepository.GetByIdAsync(id, null, true);
 
             return product.MapTo<Product, ProductImageResponse>();
         }
 
-        public async Task<PageList<ProductResponse>> FindAllWithPaginationAsync(PageParams pageParams)
+        public async Task<PageList<ProductResponse>> GetAllWithPaginationAsync(PageParams pageParams)
         {
-            var productPageList = await _productRepository.FindAllWithPaginationAsync(pageParams);
+            var productPageList = await _productRepository.GetAllWithPaginationAsync(pageParams);
 
             return productPageList.MapTo<PageList<Product>, PageList<ProductResponse>>();
         }
@@ -76,5 +81,8 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
 
             return productList.MapTo<List<Product>, List<ProductResponse>>();
         }
+
+        public async Task<Product> GetByIdAsyncReturnsDomainObject(int id) =>
+            await _productRepository.GetByIdAsync(id);
     }
 }
