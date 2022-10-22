@@ -19,34 +19,36 @@ namespace UnitTests.ControllerTests
         }
 
         [Fact]
-        public async Task GetByIdAsync_ReturnsEntity()
+        public async Task GetProductByIdAsync_ReturnsEntity()
         {
             var id = 1;
             var productImageResponse = ProductBuilder.NewObject().ImageResponseBuild();
-            _service.Setup(s => s.GetByIdAsync(id)).ReturnsAsync(productImageResponse);
+            _service.Setup(s => s.GetProductByIdAsync(id)).ReturnsAsync(productImageResponse);
 
-            var controllerResult = await _controller.GetByIdAsync(id);
+            var controllerResult = await _controller.GetProductByIdAsync(id);
 
+            _service.Verify(s => s.GetProductByIdAsync(id), Times.Once());
             Assert.Equal(controllerResult, productImageResponse);
         }
 
         [Fact]
-        public async Task GetAllAsync_ReturnsEntities()
+        public async Task GetAllProductsAsync_ReturnsEntities()
         {
             var productResponseList = new List<ProductResponse>()
             {
                 ProductBuilder.NewObject().ResponseBuild(),
                 ProductBuilder.NewObject().ResponseBuild()
             };
-            _service.Setup(s => s.GetAllAsync()).ReturnsAsync(productResponseList);
+            _service.Setup(s => s.GetAllProductsAsync()).ReturnsAsync(productResponseList);
 
-            var controllerResult = await _controller.GetAllAsync();
+            var controllerResult = await _controller.GetAllProductsAsync();
 
+            _service.Verify(s => s.GetAllProductsAsync(), Times.Once());
             Assert.Equal(controllerResult, productResponseList);
         }
 
         [Fact]
-        public async Task GetAllWithPagination_ReturnsEntities()
+        public async Task GetAllProductsWithPaginationAsync_ReturnsEntities()
         {
             var pageParams = PageParamsBuilders.NewObject().DomainBuild();
             var productResponseList = new List<ProductResponse>()
@@ -58,83 +60,84 @@ namespace UnitTests.ControllerTests
                 ProductBuilder.NewObject().ResponseBuild()
             };
             var productResponsePageList = BuildersUtils.BuildPageList(productResponseList);
-            _service.Setup(s => s.GetAllWithPaginationAsync(pageParams)).ReturnsAsync(productResponsePageList);
+            _service.Setup(s => s.GetAllProductsWithPaginationAsync(pageParams)).ReturnsAsync(productResponsePageList);
 
-            var controllerResult = await _controller.GetAllWithPaginationAsync(pageParams);
+            var controllerResult = await _controller.GetAllProductsWithPaginationAsync(pageParams);
 
+            _service.Verify(s => s.GetAllProductsWithPaginationAsync(pageParams), Times.Once());
             Assert.Equal(controllerResult, productResponsePageList);
         }
 
         [Fact]
-        public async Task AddAsync_ReturnsTrue()
-        {
-            var controllerResult = await AddAsyncMockedAsync(true);
-
-            Assert.True(controllerResult);
-        }
-
-        [Fact]
-        public async Task AddAsync_ReturnsFalse()
-        {
-            var controllerResult = await AddAsyncMockedAsync(false);
-
-            Assert.False(controllerResult);
-        }
-
-        [Fact]
-        public async Task UpdateAsync_ReturnsTrue()
-        {
-            var controllerResult = await UpdateAsyncMockedAsync(true);
-
-            Assert.True(controllerResult);
-        }
-
-        [Fact]
-        public async Task UpdateAsync_ReturnsFalse()
-        {
-            var controllerResult = await UpdateAsyncMockedAsync(false);
-
-            Assert.False(controllerResult);
-        }
-
-        [Fact]
-        public async Task DeleteAsync_ReturnsTrue()
-        {
-            var controllerResult = await DeleteAsyncMockedAsync(true);
-
-            Assert.True(controllerResult);
-        }
-
-        [Fact]
-        public async Task DeleteAsync_ReturnsFalse()
-        {
-            var controllerResult = await DeleteAsyncMockedAsync(false);
-
-            Assert.False(controllerResult);
-        }
-
-        private async Task<bool> AddAsyncMockedAsync(bool addReturn)
+        public async Task AddProductAsync_ReturnsTrue()
         {
             var productSaveRequest = ProductBuilder.NewObject().SaveRequestBuild();
-            _service.Setup(s => s.AddAsync(productSaveRequest)).ReturnsAsync(addReturn);
+            _service.Setup(s => s.AddProductAsync(productSaveRequest)).ReturnsAsync(true);
 
-            return await _controller.AddAsync(productSaveRequest);
+            var controllerResult = await _controller.AddProductAsync(productSaveRequest);
+
+            _service.Verify(s => s.AddProductAsync(productSaveRequest), Times.Once());
+            Assert.True(controllerResult);
         }
 
-        private async Task<bool> UpdateAsyncMockedAsync(bool updateReturn)
+        [Fact]
+        public async Task AddProductAsync_ReturnsFalse()
+        {
+            var productSaveRequest = ProductBuilder.NewObject().SaveRequestBuild();
+            _service.Setup(s => s.AddProductAsync(productSaveRequest)).ReturnsAsync(false);
+
+            var controllerResult = await _controller.AddProductAsync(productSaveRequest);
+
+            _service.Verify(s => s.AddProductAsync(productSaveRequest), Times.Once());
+            Assert.False(controllerResult);
+        }
+
+        [Fact]
+        public async Task UpdateProductAsync_ReturnsTrue()
         {
             var productUpdateRequest = ProductBuilder.NewObject().UpdateRequestBuild();
-            _service.Setup(s => s.UpdateAsync(productUpdateRequest)).ReturnsAsync(updateReturn);
+            _service.Setup(s => s.UpdateProductAsync(productUpdateRequest)).ReturnsAsync(true);
 
-            return await _controller.UpdateAsync(productUpdateRequest);
+            var controllerResult = await _controller.UpdateProductAsync(productUpdateRequest);
+
+            _service.Verify(s => s.UpdateProductAsync(productUpdateRequest), Times.Once());
+            Assert.True(controllerResult);
         }
 
-        private async Task<bool> DeleteAsyncMockedAsync(bool deleteReturn)
+        [Fact]
+        public async Task UpdateProductAsync_ReturnsFalse()
+        {
+            var productUpdateRequest = ProductBuilder.NewObject().UpdateRequestBuild();
+            _service.Setup(s => s.UpdateProductAsync(productUpdateRequest)).ReturnsAsync(false);
+
+            var controllerResult = await _controller.UpdateProductAsync(productUpdateRequest);
+
+            _service.Verify(s => s.UpdateProductAsync(productUpdateRequest), Times.Once());
+            Assert.False(controllerResult);
+        }
+
+        [Fact]
+        public async Task DeleteProductAsync_ReturnsTrue()
         {
             var id = 1;
-            _service.Setup(s => s.DeleteAsync(id)).ReturnsAsync(deleteReturn);
+            _service.Setup(s => s.DeleteProductAsync(id)).ReturnsAsync(true);
 
-            return await _controller.DeleteAsync(id);
+            var controllerResult = await _controller.DeleteProductAsync(id);
+
+            _service.Verify(s => s.DeleteProductAsync(id), Times.Once());
+            Assert.True(controllerResult);
+        }
+
+        [Fact]
+        public async Task DeleteProductAsync_ReturnsFalse()
+        {
+            var id = 1;
+            _service.Setup(s => s.DeleteProductAsync(id)).ReturnsAsync(false);
+
+            var controllerResult = await _controller.DeleteProductAsync(id);
+
+            _service.Verify(s => s.DeleteProductAsync(id), Times.Once());
+            Assert.False(controllerResult);
         }
     }
 }

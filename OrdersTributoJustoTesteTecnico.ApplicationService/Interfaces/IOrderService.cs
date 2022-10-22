@@ -6,12 +6,12 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Interfaces
 {
     public interface IOrderService
     {
-        Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteOrderAsync(int id);
         Task<bool> AddOrderAsync(OrderSaveRequest orderSaveRequest);
-        Task<bool> AddProductAsync(OrderUpdateRequest orderUpdateRequest);
-        Task<bool> RemoveProductAsync(OrderUpdateRequest orderUpdateRequest);
-        Task<OrderResponse> GetByIdAsync(int id);
-        Task<List<OrderResponse>> GetAllAsync();
-        Task<PageList<OrderResponse>> GetAllWithPaginationAsync(PageParams pageParams);
+        Task<bool> AddProductToOrderAsync(OrderUpdateRequest orderUpdateRequest);
+        Task<bool> RemoveProductFromOrderAsync(OrderUpdateRequest orderUpdateRequest);
+        Task<OrderResponse> GetOrderByIdAsync(int id);
+        Task<List<OrderResponse>> GetAllOrdersAsync();
+        Task<PageList<OrderResponse>> GetAllOrdersWithPaginationAsync(PageParams pageParams);
     }
 }

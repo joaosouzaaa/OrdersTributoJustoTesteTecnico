@@ -22,7 +22,7 @@ namespace OrdersTributoJustoTesteTecnico.Infra.EntitiesMapping
             builder.HasOne(o => o.Client)
                 .WithMany(c => c.Orders)
                 .HasForeignKey(o => o.ClientId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(o => o.Products).WithMany(p => p.Order)
                 .UsingEntity<Dictionary<string, object>>("OrderProduct", config =>

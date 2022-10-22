@@ -22,7 +22,7 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
             _productRepository = productRepository;
         }
 
-        public async Task<bool> AddAsync(ProductSaveRequest productSaveRequest)
+        public async Task<bool> AddProductAsync(ProductSaveRequest productSaveRequest)
         {
             var product = productSaveRequest.MapTo<ProductSaveRequest, Product>();
 
@@ -40,12 +40,20 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
             return await _productRepository.AddAsync(product);
         }
 
-        public async Task<bool> UpdateAsync(ProductUpdateRequest productUpdateRequest)
+        public async Task<bool> UpdateProductAsync(ProductUpdateRequest productUpdateRequest)
         {
+            if (!await _productRepository.HaveObjectInDbAsync(p => p.Id == productUpdateRequest.Id))
+                return _notification.AddDomainNotification("Product", EMessage.NotFound.Description().FormatTo("Product"));
+
             var product = productUpdateRequest.MapTo<ProductUpdateRequest, Product>();
             
             if(productUpdateRequest.ImageToSave != null)
+            {
                 product.Image = productUpdateRequest.ImageToSave.ImageToBytes();
+
+                if (product.Image == null)
+                    return _notification.AddDomainNotification("File format", "Imagem no formato inválido");
+            }
 
             if (!await ValidateAsync(product))
                 return false;
@@ -53,29 +61,29 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
             return await _productRepository.UpdateAsync(product);
         }
         
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteProductAsync(int id)
         {
-            if (!await _productRepository.HaveObjectInDbAsync(c => c.Id == id))
+            if (!await _productRepository.HaveObjectInDbAsync(p => p.Id == id))
                 return _notification.AddDomainNotification("Product", EMessage.NotFound.Description().FormatTo("Product"));
 
             return await _productRepository.DeleteAsync(id);
         }
 
-        public async Task<ProductImageResponse> GetByIdAsync(int id)
+        public async Task<ProductImageResponse> GetProductByIdAsync(int id)
         {
-            var product = await _productRepository.GetByIdAsync(id, null, true);
+            var product = await _productRepository.GetByIdAsync(id);
 
             return product.MapTo<Product, ProductImageResponse>();
         }
 
-        public async Task<PageList<ProductResponse>> GetAllWithPaginationAsync(PageParams pageParams)
+        public async Task<PageList<ProductResponse>> GetAllProductsWithPaginationAsync(PageParams pageParams)
         {
             var productPageList = await _productRepository.GetAllWithPaginationAsync(pageParams);
 
             return productPageList.MapTo<PageList<Product>, PageList<ProductResponse>>();
         }
 
-        public async Task<List<ProductResponse>> GetAllAsync()
+        public async Task<List<ProductResponse>> GetAllProductsAsync()
         {
             var productList = await _productRepository.GetAllAsync();
 

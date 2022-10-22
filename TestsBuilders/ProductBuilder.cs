@@ -73,5 +73,19 @@ namespace TestsBuilders
 
             return this;
         }
+
+        public ProductBuilder WithImageToSave(IFormFile imageToSave)
+        {
+            _imageToSave = imageToSave;
+
+            return this;
+        }
+
+        public ProductBuilder WithId(int id)
+        {
+            _id = id;
+
+            return this;
+        }
     }
 }

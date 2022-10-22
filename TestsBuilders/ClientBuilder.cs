@@ -82,5 +82,12 @@ namespace TestsBuilders
             
             return this;
         }
+
+        public ClientBuilder WithId(int id)
+        {
+            _id = id;
+
+            return this;
+        }
     }
 }

@@ -18,32 +18,32 @@ namespace OrdersTributoJustoTesteTecnico.Api.Controllers
             _orderService = orderService;
         }
 
-        [HttpGet("get_by_id")]
-        public async Task<OrderResponse> GetByIdAsync([FromQuery] int id) =>
-            await _orderService.GetByIdAsync(id);
+        [HttpGet("get-by-id")]
+        public async Task<OrderResponse> GetOrderByIdAsync([FromQuery] int id) =>
+            await _orderService.GetOrderByIdAsync(id);
 
-        [HttpGet("get_all")]
-        public async Task<List<OrderResponse>> GetAllAsync() =>
-            await _orderService.GetAllAsync();
+        [HttpGet("get-all")]
+        public async Task<List<OrderResponse>> GetAllOrdersAsync() =>
+            await _orderService.GetAllOrdersAsync();
 
-        [HttpGet("get_all_paginated")]
-        public async Task<PageList<OrderResponse>> GetAllWithPaginationAsync([FromQuery] PageParams pageParams) =>
-            await _orderService.GetAllWithPaginationAsync(pageParams);
+        [HttpGet("get-all-paginated")]
+        public async Task<PageList<OrderResponse>> GetAllOrdersWithPaginationAsync([FromQuery] PageParams pageParams) =>
+            await _orderService.GetAllOrdersWithPaginationAsync(pageParams);
 
-        [HttpPost("create")]
+        [HttpPost("create-order")]
         public async Task<bool> AddOrderAsync([FromBody] OrderSaveRequest orderSaveRequest) =>
             await _orderService.AddOrderAsync(orderSaveRequest);
 
-        [HttpPut("add_product")]
-        public async Task<bool> AddProductAsync([FromBody] OrderUpdateRequest orderUpdateRequest) =>
-            await _orderService.AddProductAsync(orderUpdateRequest);
+        [HttpPut("add-product")]
+        public async Task<bool> AddProductToOrderAsync([FromBody] OrderUpdateRequest orderUpdateRequest) =>
+            await _orderService.AddProductToOrderAsync(orderUpdateRequest);
 
-        [HttpPut("remove_product")]
-        public async Task<bool> RemoveProductAsync([FromBody] OrderUpdateRequest orderUpdateRequest) =>
-            await _orderService.RemoveProductAsync(orderUpdateRequest);
+        [HttpPut("remove-product")]
+        public async Task<bool> RemoveProductFromOrderAsync([FromBody] OrderUpdateRequest orderUpdateRequest) =>
+            await _orderService.RemoveProductFromOrderAsync(orderUpdateRequest);
 
-        [HttpDelete("delete")]
-        public async Task<bool> DeleteAsync([FromQuery] int id) =>
-            await _orderService.DeleteAsync(id);
+        [HttpDelete("delete-order")]
+        public async Task<bool> DeleteOrderAsync([FromQuery] int id) =>
+            await _orderService.DeleteOrderAsync(id);
     }
 }

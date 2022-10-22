@@ -17,20 +17,20 @@ namespace OrdersTributoJustoTesteTecnico.Api.Controllers
             _clientService = clientService;
         }
 
-        [HttpGet("get_client")]
+        [HttpGet("get-by-id")]
         public async Task<ClientResponse> GetClientByIdAsync([FromQuery] int id) =>
             await _clientService.GetClientByIdAsync(id);
 
-        [HttpPost("create")]
-        public async Task<bool> AddAsync([FromBody] ClientSaveRequest clientSaveRequest) =>
-            await _clientService.AddAsync(clientSaveRequest);
+        [HttpPost("create-client")]
+        public async Task<bool> AddClientAsync([FromBody] ClientSaveRequest clientSaveRequest) =>
+            await _clientService.AddClientAsync(clientSaveRequest);
 
-        [HttpPut("update")]
-        public async Task<bool> UpdateAsync([FromBody] ClientUpdateRequest clientUpdateRequest) =>
-            await _clientService.UpdateAsync(clientUpdateRequest);
+        [HttpPut("update-client")]
+        public async Task<bool> UpdateClientAsync([FromBody] ClientUpdateRequest clientUpdateRequest) =>
+            await _clientService.UpdateClientAsync(clientUpdateRequest);
 
-        [HttpDelete("delete")]
-        public async Task<bool> DeleteAsync([FromQuery] int id) =>
-            await _clientService.DeleteAsync(id);
+        [HttpDelete("delete-client")]
+        public async Task<bool> DeleteClientAsync([FromQuery] int id) =>
+            await _clientService.DeleteClientAsync(id);
     }
 }

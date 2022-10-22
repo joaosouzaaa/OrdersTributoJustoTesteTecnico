@@ -19,16 +19,19 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductService _productService;
+        private readonly IClientService _clientService;
 
         public OrderService(IOrderRepository orderRepository, IProductService productService,
+                            IClientService clientService,
                             INotificationHandler notification, IValidate<Order> validate) 
                             : base(notification, validate)
         {
             _orderRepository = orderRepository;
+            _clientService = clientService;
             _productService = productService;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteOrderAsync(int id)
         {
             if (!await _orderRepository.HaveObjectInDbAsync(c => c.Id == id))
                 return _notification.AddDomainNotification("Client", EMessage.NotFound.Description().FormatTo("Client"));
@@ -38,6 +41,9 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
 
         public async Task<bool> AddOrderAsync(OrderSaveRequest orderSaveRequest)
         {
+            if(!await _clientService.ClientIdExistAsync(orderSaveRequest.ClientId))
+                return _notification.AddDomainNotification("Client", "Client não existe.");
+
             if(!orderSaveRequest.Products.Any())
                 return _notification.AddDomainNotification("Order", "Produtos devem ser inseridos");
 
@@ -49,7 +55,7 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
             return await _orderRepository.AddAsync(order);
         }
 
-        public async Task<bool> AddProductAsync(OrderUpdateRequest orderUpdateRequest)
+        public async Task<bool> AddProductToOrderAsync(OrderUpdateRequest orderUpdateRequest)
         {
             var product = await _productService.GetByIdAsyncReturnsDomainObject(orderUpdateRequest.ProductId);
 
@@ -66,38 +72,38 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
             return await _orderRepository.UpdateAsync(order);
         }
 
-        public async Task<bool> RemoveProductAsync(OrderUpdateRequest orderUpdateRequest)
+        public async Task<bool> RemoveProductFromOrderAsync(OrderUpdateRequest orderUpdateRequest)
         {
-            var product = await _productService.GetByIdAsyncReturnsDomainObject(orderUpdateRequest.ProductId);
-
-            if (product == null)
-                return _notification.AddDomainNotification("Product", EMessage.NotFound.Description().FormatTo("Product"));
-
             var order = await _orderRepository.GetByIdAsync(orderUpdateRequest.OrderId, o => o.Include(o => o.Products));
 
             if (order == null)
                 return _notification.AddDomainNotification("Order", EMessage.NotFound.Description().FormatTo("Order"));
+            
+            var product = order.Products.FirstOrDefault(p => p.Id == orderUpdateRequest.ProductId);
+            
+            if (product == null)
+                return _notification.AddDomainNotification("Product", EMessage.NotFound.Description().FormatTo("Product"));
 
             RemoveOrderPropertiesBasedOnProduct(order, product);
 
             return await _orderRepository.UpdateAsync(order);
         }
 
-        public async Task<OrderResponse> GetByIdAsync(int id)
+        public async Task<OrderResponse> GetOrderByIdAsync(int id)
         {
             var order = await _orderRepository.GetByIdAsync(id, o => o.Include(o => o.Client).Include(o => o.Products));
 
             return order.MapTo<Order, OrderResponse>();
         }
 
-        public async Task<List<OrderResponse>> GetAllAsync()
+        public async Task<List<OrderResponse>> GetAllOrdersAsync()
         {
             var ordersList = await _orderRepository.GetAllAsync(o => o.Include(o => o.Client).Include(o => o.Products));
 
             return ordersList.MapTo<List<Order>, List<OrderResponse>>();
         }
 
-        public async Task<PageList<OrderResponse>> GetAllWithPaginationAsync(PageParams pageParams)
+        public async Task<PageList<OrderResponse>> GetAllOrdersWithPaginationAsync(PageParams pageParams)
         {
             var ordersPageList = await _orderRepository.GetAllWithPaginationAsync(pageParams, o => o.Include(o => o.Client).Include(o => o.Products));
 
@@ -115,15 +121,13 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
 
             foreach (var productId in orderSaveRequest.Products)
             {
-                var productResponse = await _productService.GetByIdAsync(productId);
+                var product = await _productService.GetByIdAsyncReturnsDomainObject(productId);
 
-                if(productResponse == null)
+                if(product == null)
                 {
                     _notification.AddDomainNotification("Product", EMessage.NotFound.Description().FormatTo("Product"));
                     return null;
                 }
-
-                var product = productResponse.MapTo<ProductImageResponse, Product>();
 
                 order.TotalPrice += product.Price;
 
@@ -136,23 +140,21 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
         private void AddOrderPropertiesBasedOnProduct(Order order, Product product)
         {
             if (order.Products != null)
+            {
                 order.Products.Add(product);
-            else
-                order.Products = new List<Product>();
-
-            order.Quantity += 1;
-            order.TotalPrice += product.Price;
+                order.Quantity -= 1;
+                order.TotalPrice -= product.Price;
+            }
         }
 
         private void RemoveOrderPropertiesBasedOnProduct(Order order, Product product)
         {
             if(order.Products != null)
+            {
                 order.Products.Remove(product);
-            else
-                order.Products = new List<Product>();
-
-            order.Quantity -= 1;
-            order.TotalPrice -= product.Price;
+                order.Quantity -= 1;
+                order.TotalPrice -= product.Price;
+            }
         }
     }
 }

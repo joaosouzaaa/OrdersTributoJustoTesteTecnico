@@ -21,9 +21,12 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
             _clientRepository = clientRepository;
         }
 
-        public async Task<bool> AddAsync(ClientSaveRequest clientSaveRequest)
+        public async Task<bool> AddClientAsync(ClientSaveRequest clientSaveRequest)
         {
             var client = clientSaveRequest.MapTo<ClientSaveRequest, Client>();
+
+            if (await _clientRepository.HaveObjectInDbAsync(c => c.Cpf == clientSaveRequest.Cpf))
+                return _notification.AddDomainNotification("Cpf", "Cpf já existente");
 
             if (!await ValidateAsync(client))
                 return false;
@@ -31,8 +34,11 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
             return await _clientRepository.AddAsync(client);
         }
 
-        public async Task<bool> UpdateAsync(ClientUpdateRequest clientUpdateRequest)
+        public async Task<bool> UpdateClientAsync(ClientUpdateRequest clientUpdateRequest)
         {
+            if (!await _clientRepository.HaveObjectInDbAsync(c => c.Id == clientUpdateRequest.Id))
+                return _notification.AddDomainNotification("Product", EMessage.NotFound.Description().FormatTo("Product"));
+
             var client = clientUpdateRequest.MapTo<ClientUpdateRequest, Client>();
 
             if (!await ValidateAsync(client))
@@ -41,7 +47,7 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
             return await _clientRepository.UpdateAsync(client);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteClientAsync(int id)
         {
             if (!await _clientRepository.HaveObjectInDbAsync(c => c.Id == id))
                 return _notification.AddDomainNotification("Client", EMessage.NotFound.Description().FormatTo("Client"));
@@ -55,5 +61,8 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.Services
 
             return client.MapTo<Client, ClientResponse>();
         }
+
+        public async Task<bool> ClientIdExistAsync(int id) =>
+            await _clientRepository.HaveObjectInDbAsync(c => c.Id == id);
     }
 }

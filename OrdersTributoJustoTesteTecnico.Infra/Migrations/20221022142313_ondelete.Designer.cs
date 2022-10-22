@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OrdersTributoJustoTesteTecnico.Infra.Contexts;
 
@@ -10,9 +11,10 @@ using OrdersTributoJustoTesteTecnico.Infra.Contexts;
 namespace OrdersTributoJustoTesteTecnico.Infra.Migrations
 {
     [DbContext(typeof(OrdersTributoJustoTesteTecnicoDbContext))]
-    partial class OrdersTributoJustoTesteTecnicoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221022142313_ondelete")]
+    partial class ondelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

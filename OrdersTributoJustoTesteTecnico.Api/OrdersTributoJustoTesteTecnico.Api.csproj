@@ -18,4 +18,8 @@
     <ProjectReference Include="..\OrdersTributoJustoTesteTecnico.Ioc\OrdersTributoJustoTesteTecnico.Ioc.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="IntegrationTests" />
+	</ItemGroup>
+
 </Project>

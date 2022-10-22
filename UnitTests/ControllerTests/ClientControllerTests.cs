@@ -1,6 +1,5 @@
 ﻿using Moq;
 using OrdersTributoJustoTesteTecnico.Api.Controllers;
-using OrdersTributoJustoTesteTecnico.ApplicationService.DataTransferObjects.Requests.Client;
 using OrdersTributoJustoTesteTecnico.ApplicationService.Interfaces;
 using TestsBuilders;
 
@@ -16,7 +15,7 @@ namespace UnitTests.ControllerTests
             _service = new Mock<IClientService>();
             _controller = new ClientController(_service.Object);
         }
-
+        
         [Fact]
         public async Task GetClientByIdAsync_ReturnsEntity()
         {
@@ -26,79 +25,80 @@ namespace UnitTests.ControllerTests
 
             var controllerResult = await _controller.GetClientByIdAsync(id);
 
+            _service.Verify(s => s.GetClientByIdAsync(id), Times.Once());
             Assert.Equal(clientResponse, controllerResult);
         }
 
         [Fact]
-        public async Task AddAsync_ReturnsTrue()
-        {
-            var controllerResult = await AddMockedClientAsync(addReturn: true);
-
-            Assert.True(controllerResult);
-        }
-
-        [Fact]
-        public async Task AddAsync_ReturnsFalse()
-        {
-            var controllerResult = await AddMockedClientAsync(addReturn: false);
-
-            Assert.False(controllerResult);
-        }
-
-        [Fact]
-        public async Task UpdateAsync_ReturnsTrue()
-        {
-            var controllerResult = await UpdateMockedClientAsync(true);
-
-            Assert.True(controllerResult);
-        }
-
-        [Fact]
-        public async Task UpdateAsync_ReturnsFalse()
-        {
-            var controllerResult = await UpdateMockedClientAsync(false);
-
-            Assert.False(controllerResult);
-        }
-
-        [Fact]
-        public async Task DeleteAsync_ReturnsTrue()
-        {
-            var controllerResult = await DeleteMockedClientAsync(true);
-
-            Assert.True(controllerResult);
-        }
-
-        [Fact]
-        public async Task DeleteAsync_ReturnsFalse()
-        {
-            var controllerResult = await DeleteMockedClientAsync(false);
-
-            Assert.False(controllerResult);
-        }
-
-        private async Task<bool> DeleteMockedClientAsync(bool deleteReturn)
-        {
-            var id = 1;
-            _service.Setup(s => s.DeleteAsync(id)).ReturnsAsync(deleteReturn);
-
-            return await _controller.DeleteAsync(id);
-        }
-
-        private async Task<bool> UpdateMockedClientAsync(bool updateReturn)
-        {
-            var clientUpdateRequest = ClientBuilder.NewObject().UpdateRequestBuild();
-            _service.Setup(s => s.UpdateAsync(clientUpdateRequest)).ReturnsAsync(updateReturn);
-
-            return await _controller.UpdateAsync(clientUpdateRequest);
-        }
-
-        private async Task<bool> AddMockedClientAsync(bool addReturn)
+        public async Task AddClientAsync_ReturnsTrue()
         {
             var clientSaveRequest = ClientBuilder.NewObject().SaveRequestBuild();
-            _service.Setup(s => s.AddAsync(clientSaveRequest)).ReturnsAsync(addReturn);
+            _service.Setup(s => s.AddClientAsync(clientSaveRequest)).ReturnsAsync(true);
+            
+            var controllerResult = await _controller.AddClientAsync(clientSaveRequest);
 
-            return await _controller.AddAsync(clientSaveRequest);
+            _service.Verify(s => s.AddClientAsync(clientSaveRequest), Times.Once());
+            Assert.True(controllerResult);
+        }
+
+        [Fact]
+        public async Task AddClientAsync_ReturnsFalse()
+        {
+            var clientSaveRequest = ClientBuilder.NewObject().SaveRequestBuild();
+            _service.Setup(s => s.AddClientAsync(clientSaveRequest)).ReturnsAsync(false);
+
+            var controllerResult = await _controller.AddClientAsync(clientSaveRequest);
+
+            _service.Verify(s => s.AddClientAsync(clientSaveRequest), Times.Once());
+            Assert.False(controllerResult);
+        }
+
+        [Fact]
+        public async Task UpdateClientAsync_ReturnsTrue()
+        {
+            var clientUpdateRequest = ClientBuilder.NewObject().UpdateRequestBuild();
+            _service.Setup(s => s.UpdateClientAsync(clientUpdateRequest)).ReturnsAsync(true);
+
+            var controllerResult = await _controller.UpdateClientAsync(clientUpdateRequest);
+
+            _service.Verify(s => s.UpdateClientAsync(clientUpdateRequest), Times.Once());
+            Assert.True(controllerResult);
+        }
+
+        [Fact]
+        public async Task UpdateClientAsync_ReturnsFalse()
+        {
+            var clientUpdateRequest = ClientBuilder.NewObject().UpdateRequestBuild();
+            _service.Setup(s => s.UpdateClientAsync(clientUpdateRequest)).ReturnsAsync(false);
+
+            var controllerResult = await _controller.UpdateClientAsync(clientUpdateRequest);
+
+            _service.Verify(s => s.UpdateClientAsync(clientUpdateRequest), Times.Once());
+            Assert.False(controllerResult);
+        }
+
+        [Fact]
+        public async Task DeleteClientAsync_ReturnsTrue()
+        {
+            var id = 1;
+            _service.Setup(s => s.DeleteClientAsync(id)).ReturnsAsync(true);
+
+            var controllerResult = await _controller.DeleteClientAsync(id);
+
+            _service.Verify(s => s.DeleteClientAsync(id), Times.Once());
+            Assert.True(controllerResult);
+        }
+
+        [Fact]
+        public async Task DeleteClientAsync_ReturnsFalse()
+        {
+            var id = 1;
+            _service.Setup(s => s.DeleteClientAsync(id)).ReturnsAsync(false);
+
+            var controllerResult = await _controller.DeleteClientAsync(id);
+
+            _service.Verify(s => s.DeleteClientAsync(id), Times.Once());
+            Assert.False(controllerResult);
         }
     }
 }

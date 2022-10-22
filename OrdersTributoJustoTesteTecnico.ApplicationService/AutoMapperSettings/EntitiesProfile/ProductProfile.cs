@@ -18,8 +18,7 @@ namespace OrdersTributoJustoTesteTecnico.ApplicationService.AutoMapperSettings.E
 
             CreateMap<PageList<Product>, PageList<ProductResponse>>();
 
-            CreateMap<Product, ProductImageResponse>()
-                .ReverseMap();
+            CreateMap<Product, ProductImageResponse>();
         }
     }
 }

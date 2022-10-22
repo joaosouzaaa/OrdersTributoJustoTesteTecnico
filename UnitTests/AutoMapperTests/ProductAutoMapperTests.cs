@@ -80,17 +80,5 @@ namespace UnitTests.AutoMapperTests
             Assert.Equal(productImageResponse.Price, product.Price);
             Assert.Equal(productImageResponse.Image, product.Image);
         }
-
-        [Fact]
-        public void ProductImageResponse_To_Product()
-        {
-            var productImageResponse = ProductBuilder.NewObject().ImageResponseBuild();
-            var product = productImageResponse.MapTo<ProductImageResponse, Product>();
-
-            Assert.Equal(product.Id, productImageResponse.Id);
-            Assert.Equal(product.Name, productImageResponse.Name);
-            Assert.Equal(product.Price, productImageResponse.Price);
-            Assert.Equal(product.Image, productImageResponse.Image);
-        }
     }
 }
